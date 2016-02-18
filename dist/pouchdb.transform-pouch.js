@@ -89,8 +89,12 @@ exports.transform = exports.filter = function transform(config) {
     }
 
     function modifyChanges(res) {
-      res.results = res.results.map(modifyChange);
-      return res;
+      if(res.results) {
+        res.results = res.results.map(modifyChange);
+        return res;
+      } else if (res.status) {
+        //TODO handel res.status === "cancelled"
+      }
     }
 
     if (args.options.complete) {
@@ -247,7 +251,7 @@ function all(iterable) {
   var resolved = 0;
   var i = -1;
   var promise = new Promise(INTERNAL);
-  
+
   while (++i < len) {
     allResolver(iterable[i], i);
   }
@@ -511,7 +515,7 @@ function safelyResolveThenable(self, thenable) {
   function tryToUnwrap() {
     thenable(onSuccess, onError);
   }
-  
+
   var result = tryCatch(tryToUnwrap);
   if (result.status === 'error') {
     onError(result.value);
